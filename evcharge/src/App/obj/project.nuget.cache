@@ -1,15 +1,27 @@
 {
   "version": 2,
-  "dgSpecHash": "JLIbzkar+uk=",
+  "dgSpecHash": "OskhhWEQNOo=",
   "success": true,
   "projectFilePath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\App\\App.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Sajith Fernando\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\Sajith Fernando\\.nuget\\packages\\fluentvalidation\\12.0.0\\fluentvalidation.12.0.0.nupkg.sha512",
     "C:\\Users\\Sajith Fernando\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\12.0.0\\fluentvalidation.dependencyinjectionextensions.12.0.0.nupkg.sha512",
     "C:\\Users\\Sajith Fernando\\.nuget\\packages\\mapster\\7.4.0\\mapster.7.4.0.nupkg.sha512",
     "C:\\Users\\Sajith Fernando\\.nuget\\packages\\mapster.core\\1.2.1\\mapster.core.1.2.1.nupkg.sha512",
     "C:\\Users\\Sajith Fernando\\.nuget\\packages\\mapster.dependencyinjection\\1.0.1\\mapster.dependencyinjection.1.0.1.nupkg.sha512",
-    "C:\\Users\\Sajith Fernando\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\6.0.0\\microsoft.extensions.dependencyinjection.abstractions.6.0.0.nupkg.sha512"
+    "C:\\Users\\Sajith Fernando\\.nuget\\packages\\microsoft.bcl.timeprovider\\8.0.1\\microsoft.bcl.timeprovider.8.0.1.nupkg.sha512",
+    "C:\\Users\\Sajith Fernando\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\8.0.0\\microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sajith Fernando\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\6.0.0\\microsoft.extensions.dependencyinjection.abstractions.6.0.0.nupkg.sha512",
+    "C:\\Users\\Sajith Fernando\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
+    "C:\\Users\\Sajith Fernando\\.nuget\\packages\\microsoft.identitymodel.abstractions\\8.2.0\\microsoft.identitymodel.abstractions.8.2.0.nupkg.sha512",
+    "C:\\Users\\Sajith Fernando\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\8.2.0\\microsoft.identitymodel.jsonwebtokens.8.2.0.nupkg.sha512",
+    "C:\\Users\\Sajith Fernando\\.nuget\\packages\\microsoft.identitymodel.logging\\8.2.0\\microsoft.identitymodel.logging.8.2.0.nupkg.sha512",
+    "C:\\Users\\Sajith Fernando\\.nuget\\packages\\microsoft.identitymodel.tokens\\8.2.0\\microsoft.identitymodel.tokens.8.2.0.nupkg.sha512",
+    "C:\\Users\\Sajith Fernando\\.nuget\\packages\\mongodb.bson\\2.25.0\\mongodb.bson.2.25.0.nupkg.sha512",
+    "C:\\Users\\Sajith Fernando\\.nuget\\packages\\system.identitymodel.tokens.jwt\\8.2.0\\system.identitymodel.tokens.jwt.8.2.0.nupkg.sha512",
+    "C:\\Users\\Sajith Fernando\\.nuget\\packages\\system.memory\\4.5.5\\system.memory.4.5.5.nupkg.sha512",
+    "C:\\Users\\Sajith Fernando\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512"
   ],
   "logs": []
 }
