@@ -1,0 +1,230 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\tests\\AppTests\\AppTests.csproj": {}
+  },
+  "projects": {
+    "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\App\\App.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\App\\App.csproj",
+        "projectName": "App",
+        "projectPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\App\\App.csproj",
+        "packagesPath": "C:\\Users\\Sajith Fernando\\.nuget\\packages\\",
+        "outputPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\App\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Sajith Fernando\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Domain\\Domain.csproj": {
+                "projectPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Domain\\Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "FluentValidation": {
+              "target": "Package",
+              "version": "[12.0.0, )"
+            },
+            "FluentValidation.DependencyInjectionExtensions": {
+              "target": "Package",
+              "version": "[12.0.0, )"
+            },
+            "Mapster": {
+              "target": "Package",
+              "version": "[7.4.0, )"
+            },
+            "Mapster.DependencyInjection": {
+              "target": "Package",
+              "version": "[1.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.414/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Domain\\Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Domain\\Domain.csproj",
+        "projectName": "Domain",
+        "projectPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\Sajith Fernando\\.nuget\\packages\\",
+        "outputPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Domain\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Sajith Fernando\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.414/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\tests\\AppTests\\AppTests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\tests\\AppTests\\AppTests.csproj",
+        "projectName": "AppTests",
+        "projectPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\tests\\AppTests\\AppTests.csproj",
+        "packagesPath": "C:\\Users\\Sajith Fernando\\.nuget\\packages\\",
+        "outputPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\tests\\AppTests\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Sajith Fernando\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\App\\App.csproj": {
+                "projectPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\App\\App.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "FluentAssertions": {
+              "target": "Package",
+              "version": "[8.7.0, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.8.0, )"
+            },
+            "coverlet.collector": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.5.3, )"
+            },
+            "xunit.runner.visualstudio": {
+              "target": "Package",
+              "version": "[2.5.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.414/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
