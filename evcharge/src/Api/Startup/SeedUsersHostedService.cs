@@ -1,49 +1,42 @@
+// src/Api/Startup/SeedUsersHostedService.cs
 using App.Auth;
 using Domain.Users;
 using Infra.Users;
 using Microsoft.Extensions.Hosting;
-using MongoDB.Driver;
+using Microsoft.Extensions.Logging;
 
 namespace Api.Startup;
 
 public sealed class SeedUsersHostedService : IHostedService
 {
     private readonly IUserRepository _users;
-    public SeedUsersHostedService(IUserRepository users) => _users = users;
+    private readonly ILogger<SeedUsersHostedService> _logger;
+
+    public SeedUsersHostedService(IUserRepository users, ILogger<SeedUsersHostedService> logger)
+    {
+        _users = users;
+        _logger = logger;
+    }
 
     public async Task StartAsync(CancellationToken ct)
     {
-        // Backoffice
-        var admin = new User
+        try
         {
-            Id = Guid.NewGuid().ToString("N"),
-            Email = "admin@ev.local",
-            PasswordHash = PasswordHasher.Hash("Admin#123"),
-            Roles = new[] { Role.Backoffice },
-            Active = true
-        };
+            await _users.UpsertSeedUserAsync(
+                email: "admin@ev.local",
+                passwordHash: PasswordHasher.Hash("Admin#123"),
+                roles: new[] { Role.Backoffice });
 
-        await _users.Collection.ReplaceOneAsync(
-            Builders<User>.Filter.Eq(u => u.Email, admin.Email),
-            admin,
-            new ReplaceOptions { IsUpsert = true },
-            ct);
-
-        // Station Operator
-        var op = new User
+            await _users.UpsertSeedUserAsync(
+                email: "operator@ev.local",
+                passwordHash: PasswordHasher.Hash("Operator#123"),
+                roles: new[] { Role.StationOperator });
+        }
+        catch (Exception ex)
         {
-            Id = Guid.NewGuid().ToString("N"),
-            Email = "operator@ev.local",
-            PasswordHash = PasswordHasher.Hash("Operator#123"),
-            Roles = new[] { Role.StationOperator },
-            Active = true
-        };
-
-        await _users.Collection.ReplaceOneAsync(
-            Builders<User>.Filter.Eq(u => u.Email, op.Email),
-            op,
-            new ReplaceOptions { IsUpsert = true },
-            ct);
+            _logger.LogError(ex, "User seed failed");
+          
+        }
     }
 
     public Task StopAsync(CancellationToken ct) => Task.CompletedTask;
