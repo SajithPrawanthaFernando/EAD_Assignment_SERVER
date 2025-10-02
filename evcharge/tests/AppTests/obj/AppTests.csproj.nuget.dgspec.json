@@ -28,6 +28,9 @@
             "projectReferences": {
               "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Domain\\Domain.csproj": {
                 "projectPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Domain\\Domain.csproj"
+              },
+              "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Infra\\Infra.csproj": {
+                "projectPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Infra\\Infra.csproj"
               }
             }
           }
@@ -136,6 +139,78 @@
           "targetAlias": "net8.0",
           "dependencies": {
             "MongoDB.Bson": {
+              "target": "Package",
+              "version": "[2.25.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.414/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Infra\\Infra.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Infra\\Infra.csproj",
+        "projectName": "Infra",
+        "projectPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Infra\\Infra.csproj",
+        "packagesPath": "C:\\Users\\Sajith Fernando\\.nuget\\packages\\",
+        "outputPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Infra\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Sajith Fernando\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Domain\\Domain.csproj": {
+                "projectPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Domain\\Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.Extensions.Options": {
+              "target": "Package",
+              "version": "[8.0.2, )"
+            },
+            "MongoDB.Driver": {
               "target": "Package",
               "version": "[2.25.0, )"
             }

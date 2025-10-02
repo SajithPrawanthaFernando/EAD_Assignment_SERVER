@@ -1,0 +1,42 @@
+using App.EvOwners;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Api.Controllers;
+
+[ApiController]
+[Route("api/ev-owners")]
+[Authorize(Roles = "Backoffice")]
+public class EvOwnersController : ControllerBase
+{
+    private readonly IEvOwnerService _svc;
+    public EvOwnersController(IEvOwnerService svc) => _svc = svc;
+
+    [HttpPut] // upsert
+    public async Task<IActionResult> Upsert([FromBody] EvOwnerUpsertDto dto)
+    {
+        await _svc.UpsertAsync(dto);
+        return NoContent();
+    }
+
+    [HttpPatch("{nic}/deactivate")]
+    public async Task<IActionResult> Deactivate(string nic)
+    {
+        await _svc.DeactivateAsync(nic);
+        return NoContent();
+    }
+
+    [HttpPatch("{nic}/reactivate")]
+    public async Task<IActionResult> Reactivate(string nic)
+    {
+        await _svc.ReactivateAsync(nic);
+        return NoContent();
+    }
+
+    [HttpGet("{nic}")]
+    public async Task<ActionResult<EvOwnerView>> Get(string nic)
+    {
+        var v = await _svc.GetAsync(nic);
+        return v is null ? NotFound() : Ok(v);
+    }
+}

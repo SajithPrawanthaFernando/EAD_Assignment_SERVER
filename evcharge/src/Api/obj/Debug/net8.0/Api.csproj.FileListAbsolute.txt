@@ -5,6 +5,9 @@ D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\Api.deps.json
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\Api.runtimeconfig.json
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\Api.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\Api.pdb
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\AWSSDK.Core.dll
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\AWSSDK.SecurityToken.dll
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\BCrypt.Net-Next.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\DnsClient.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\FluentValidation.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll
@@ -35,6 +38,8 @@ D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\Microsoft.Iden
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\Microsoft.OpenApi.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\MongoDB.Bson.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\MongoDB.Driver.dll
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\MongoDB.Driver.Core.dll
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\MongoDB.Libmongocrypt.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\QRCoder.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\Serilog.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\Serilog.AspNetCore.dll
@@ -56,6 +61,9 @@ D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\System.IO.Pipe
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\System.Text.Encodings.Web.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\System.Text.Json.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\ZstdSharp.dll
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\runtimes\linux\native\libmongocrypt.so
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\runtimes\osx\native\libmongocrypt.dylib
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\runtimes\win\native\mongocrypt.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\App.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\Domain.dll
@@ -85,11 +93,3 @@ D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\obj\Debug\net8.0\refint\Api.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\obj\Debug\net8.0\Api.pdb
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\obj\Debug\net8.0\Api.genruntimeconfig.cache
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\obj\Debug\net8.0\ref\Api.dll
-D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\AWSSDK.Core.dll
-D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\AWSSDK.SecurityToken.dll
-D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\BCrypt.Net-Next.dll
-D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\MongoDB.Driver.Core.dll
-D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\MongoDB.Libmongocrypt.dll
-D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\runtimes\linux\native\libmongocrypt.so
-D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\runtimes\osx\native\libmongocrypt.dylib
-D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Api\bin\Debug\net8.0\runtimes\win\native\mongocrypt.dll

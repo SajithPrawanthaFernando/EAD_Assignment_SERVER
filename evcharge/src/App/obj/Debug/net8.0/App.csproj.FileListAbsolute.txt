@@ -2,7 +2,9 @@ D:\GitHub\EAD_Assignment_SERVER\evcharge\src\App\bin\Debug\net8.0\App.deps.json
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\App\bin\Debug\net8.0\App.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\App\bin\Debug\net8.0\App.pdb
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\App\bin\Debug\net8.0\Domain.dll
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\App\bin\Debug\net8.0\Infra.dll
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\App\bin\Debug\net8.0\Domain.pdb
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\App\bin\Debug\net8.0\Infra.pdb
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\App\obj\Debug\net8.0\App.csproj.AssemblyReference.cache
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\App\obj\Debug\net8.0\App.GeneratedMSBuildEditorConfig.editorconfig
 D:\GitHub\EAD_Assignment_SERVER\evcharge\src\App\obj\Debug\net8.0\App.AssemblyInfoInputs.cache
