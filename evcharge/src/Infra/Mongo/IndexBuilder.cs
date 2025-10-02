@@ -38,22 +38,41 @@ public static class IndexBuilder
 
         await users.Indexes.CreateOneAsync(userIndex);
 
-        // ----- stations: 2dsphere on geo -----
-        var stations = db.GetCollection<BsonDocument>("stations");
-        await stations.Indexes.CreateOneAsync(
-            new CreateIndexModel<BsonDocument>(
-                Builders<BsonDocument>.IndexKeys.Geo2DSphere("geo"),
-                new CreateIndexOptions<BsonDocument> { Name = "ix_station_geo" }
-            )
-        );
 
-        // ----- ev_owners: unique nic -----
-        var owners = db.GetCollection<BsonDocument>("ev_owners");
-        await owners.Indexes.CreateOneAsync(
-            new CreateIndexModel<BsonDocument>(
-                Builders<BsonDocument>.IndexKeys.Ascending("nic"),
-                new CreateIndexOptions<BsonDocument> { Name = "ux_evowner_nic", Unique = true }
-            )
-        );
+        // ev_owners: unique nic
+        var owners = db.GetCollection<dynamic>("ev_owners");
+        await owners.Indexes.CreateOneAsync(new CreateIndexModel<dynamic>(
+            Builders<dynamic>.IndexKeys.Ascending("nic"),
+            new CreateIndexOptions { Unique = true, Name = "ux_evowner_nic" }
+        ));
+
+        // stations: geo index (store as { type:"Point", coordinates:[lng,lat] } if you want full GeoJSON)
+        // For now, create a compound on Lat/Lng to help basic queries.
+        var stations = db.GetCollection<dynamic>("stations");
+        await stations.Indexes.CreateOneAsync(new CreateIndexModel<dynamic>(
+            Builders<dynamic>.IndexKeys.Ascending("lat").Ascending("lng"),
+            new CreateIndexOptions { Name = "ix_station_latlng" }
+        ));
+
+        // bookings: compound on station + start time + status
+        var bookings = db.GetCollection<dynamic>("bookings");
+        await bookings.Indexes.CreateOneAsync(new CreateIndexModel<dynamic>(
+            Builders<dynamic>.IndexKeys
+                .Ascending("stationId")
+                .Ascending("startTimeUtc")
+                .Ascending("status"),
+            new CreateIndexOptions { Name = "ix_booking_station_start_status" }
+        ));
+
+        // schedules: unique per (stationId, slotId, startTimeUtc)
+        var schedules = db.GetCollection<dynamic>("schedules");
+        await schedules.Indexes.CreateOneAsync(new CreateIndexModel<dynamic>(
+            Builders<dynamic>.IndexKeys
+                .Ascending("stationId")
+                .Ascending("slotId")
+                .Ascending("startTimeUtc"),
+            new CreateIndexOptions { Name = "ux_schedule_slot_time", Unique = true }
+        ));
+
     }
 }

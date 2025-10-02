@@ -1698,6 +1698,7 @@
           "Domain": "1.0.0",
           "FluentValidation": "12.0.0",
           "FluentValidation.DependencyInjectionExtensions": "12.0.0",
+          "Infra": "1.0.0",
           "Mapster": "7.4.0",
           "Mapster.DependencyInjection": "1.0.1",
           "Microsoft.Extensions.Configuration.Abstractions": "9.0.9",
@@ -1711,6 +1712,9 @@
         }
       },
       "Domain/1.0.0": {
+        "dependencies": {
+          "MongoDB.Bson": "2.25.0"
+        },
         "runtime": {
           "Domain.dll": {
             "assemblyVersion": "1.0.0",

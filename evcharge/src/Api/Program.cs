@@ -3,11 +3,17 @@ using FluentValidation;
 using Infra.Mongo;
 using App.Auth;
 using Infra.Users;
-using Domain.Users;
+using Infra.EvOwners;
+using Infra.Stations;
+using Infra.Schedules;
+using Infra.Bookings;
+using App.EvOwners;
+using App.Stations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;  
 using Microsoft.IdentityModel.Tokens;                
 using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Bind settings
 builder.Services.Configure<MongoSettings>(builder.Configuration.GetSection("Mongo"));
@@ -20,6 +26,12 @@ builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IJwtIssuer, JwtIssuer>();
 builder.Services.AddHostedService<Api.Startup.SeedUsersHostedService>();
+builder.Services.AddSingleton<IEvOwnerRepository, EvOwnerRepository>();
+builder.Services.AddSingleton<IStationRepository, StationRepository>();
+builder.Services.AddSingleton<IScheduleRepository, ScheduleRepository>();
+builder.Services.AddSingleton<IBookingRepository, BookingRepository>();
+builder.Services.AddSingleton<IEvOwnerService, EvOwnerService>();
+builder.Services.AddSingleton<IStationService, StationService>();
 
 // JWT Auth
 var jwtKey = builder.Configuration["Jwt:Key"]!;

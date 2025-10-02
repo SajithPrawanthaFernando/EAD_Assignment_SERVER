@@ -133,6 +133,9 @@
             "projectReferences": {
               "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Domain\\Domain.csproj": {
                 "projectPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Domain\\Domain.csproj"
+              },
+              "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Infra\\Infra.csproj": {
+                "projectPath": "D:\\GitHub\\EAD_Assignment_SERVER\\evcharge\\src\\Infra\\Infra.csproj"
               }
             }
           }
