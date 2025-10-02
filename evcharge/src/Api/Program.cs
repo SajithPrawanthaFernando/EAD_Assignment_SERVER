@@ -9,6 +9,7 @@ using Infra.Schedules;
 using Infra.Bookings;
 using App.EvOwners;
 using App.Stations;
+using App.Bookings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;  
 using Microsoft.IdentityModel.Tokens;                
 using Microsoft.OpenApi.Models;
@@ -32,6 +33,7 @@ builder.Services.AddSingleton<IScheduleRepository, ScheduleRepository>();
 builder.Services.AddSingleton<IBookingRepository, BookingRepository>();
 builder.Services.AddSingleton<IEvOwnerService, EvOwnerService>();
 builder.Services.AddSingleton<IStationService, StationService>();
+builder.Services.AddSingleton<IBookingService, BookingService>();
 
 // JWT Auth
 var jwtKey = builder.Configuration["Jwt:Key"]!;
