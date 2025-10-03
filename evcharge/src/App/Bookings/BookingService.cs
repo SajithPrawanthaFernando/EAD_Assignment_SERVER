@@ -81,14 +81,13 @@ public sealed class BookingService : IBookingService
         var available = await _schedules.IsAvailableAsync(dto.StationId, dto.SlotId, dto.StartTimeUtc);
         if (!available) throw new InvalidOperationException("Selected slot is not available.");
 
-        // Update booking core fields (simple repo method for status change already exists; here we just replace via small helper)
+        // Update booking core fields 
         existing.StationId = dto.StationId;
         existing.SlotId = dto.SlotId;
         existing.StartTimeUtc = dto.StartTimeUtc;
-        // keep status as-is (Pending/Approved etc.)
+   
 
-        // Minimal replace via repository (add this helper or reuse your repo Update method if you have one)
-        await _bookings.UpdateCoreAsync(existing); // <-- see extension below
+        await _bookings.UpdateCoreAsync(existing); 
 
         // Lock new slot time
         await _schedules.SetAvailabilityAsync(dto.StationId, dto.SlotId, dto.StartTimeUtc, false);
@@ -119,7 +118,7 @@ public sealed class BookingService : IBookingService
     }
 }
 
-// Small repo extension contract; add these to your IBookingRepository and implementation
+
 public static class BookingRepositoryExtensions
 {
     public static Task UpdateCoreAsync(this IBookingRepository repo, Booking b)

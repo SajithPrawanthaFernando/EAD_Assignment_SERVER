@@ -8,7 +8,7 @@ public static class IndexBuilder
 {
     public static async Task EnsureAsync(IMongoDatabase db)
     {
-        // ----- users: unique email (non-empty), partial -----
+        // users: unique email (non-empty), partial 
         var users = db.GetCollection<User>("users");
         const string emailField = "email";
         const string userEmailIndexName = "ux_user_email";
@@ -46,8 +46,6 @@ public static class IndexBuilder
             new CreateIndexOptions { Unique = true, Name = "ux_evowner_nic" }
         ));
 
-        // stations: geo index (store as { type:"Point", coordinates:[lng,lat] } if you want full GeoJSON)
-        // For now, create a compound on Lat/Lng to help basic queries.
         var stations = db.GetCollection<dynamic>("stations");
         await stations.Indexes.CreateOneAsync(new CreateIndexModel<dynamic>(
             Builders<dynamic>.IndexKeys.Ascending("lat").Ascending("lng"),

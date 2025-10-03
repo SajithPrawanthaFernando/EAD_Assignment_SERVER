@@ -23,7 +23,7 @@ public class QrController : ControllerBase
         _svc = svc; _bookings = bookings;
     }
 
-    // Backoffice: issue a QR for a booking (typically exp at booking.StartTimeUtc)
+    // Backoffice: issue a QR for a booking 
     [Authorize(Roles = "Backoffice")]
     [HttpPost("issue")]
     public async Task<ActionResult<IssueQrResponse>> Issue([FromBody] IssueQrRequest req)

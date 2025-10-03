@@ -1,4 +1,3 @@
-// src/Infra/Users/UserRepository.cs
 using Domain.Users;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -12,7 +11,6 @@ public interface IUserRepository
     Task InsertAsync(User u);
     Task<long> CountAsync();
 
- 
     Task UpsertSeedUserAsync(string email, string passwordHash, Role[] roles);
 
     IMongoCollection<User> Collection { get; }
