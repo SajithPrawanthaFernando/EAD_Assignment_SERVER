@@ -74,5 +74,16 @@ public static class IndexBuilder
             new CreateIndexOptions { Name = "ux_schedule_slot_time", Unique = true }
         ));
 
+        var qr = db.GetCollection<dynamic>("qr_tokens");
+        await qr.Indexes.CreateOneAsync(new CreateIndexModel<dynamic>(
+            Builders<dynamic>.IndexKeys.Ascending("token"),
+            new CreateIndexOptions { Unique = true, Name = "ux_qr_token" }
+        ));
+        
+        await qr.Indexes.CreateOneAsync(new CreateIndexModel<dynamic>(
+            Builders<dynamic>.IndexKeys.Ascending("expUtc"),
+            new CreateIndexOptions { Name = "ttl_qr_exp", ExpireAfter = TimeSpan.Zero }
+        ));
+
     }
 }

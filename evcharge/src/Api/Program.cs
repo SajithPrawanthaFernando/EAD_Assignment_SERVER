@@ -10,6 +10,8 @@ using Infra.Bookings;
 using App.EvOwners;
 using App.Stations;
 using App.Bookings;
+using App.Qr;
+using Infra.Qr;
 using Microsoft.AspNetCore.Authentication.JwtBearer;  
 using Microsoft.IdentityModel.Tokens;                
 using Microsoft.OpenApi.Models;
@@ -34,6 +36,9 @@ builder.Services.AddSingleton<IBookingRepository, BookingRepository>();
 builder.Services.AddSingleton<IEvOwnerService, EvOwnerService>();
 builder.Services.AddSingleton<IStationService, StationService>();
 builder.Services.AddSingleton<IBookingService, BookingService>();
+builder.Services.AddSingleton<IQrRepository, QrRepository>();
+builder.Services.AddSingleton<IQrService, QrService>();
+builder.Services.AddSingleton<INearbyStations, NearbyStations>();
 
 // JWT Auth
 var jwtKey = builder.Configuration["Jwt:Key"]!;

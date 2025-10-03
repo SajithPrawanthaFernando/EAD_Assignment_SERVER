@@ -1,6 +1,7 @@
 using Domain.EvOwners;
 using MongoDB.Driver;
 using Infra.Mongo;
+using MongoDB.Bson;
 
 namespace Infra.EvOwners;
 
@@ -20,8 +21,21 @@ public sealed class EvOwnerRepository : IEvOwnerRepository
     public async Task<EvOwner?> GetAsync(string nic) =>
         await _col.Find(x => x.Nic == nic).FirstOrDefaultAsync();
 
-    public async Task UpsertAsync(EvOwner o) =>
-        await _col.ReplaceOneAsync(x => x.Nic == o.Nic, o, new ReplaceOptions { IsUpsert = true });
+    public async Task UpsertAsync(EvOwner o)
+    {
+        var filter = Builders<EvOwner>.Filter.Eq(x => x.Nic, o.Nic);
+
+        var update = Builders<EvOwner>.Update
+            // set on both insert & update
+            .Set(x => x.Name, o.Name)
+            .Set(x => x.Phone, o.Phone)
+            .Set(x => x.Status, o.Status)
+            // ensure keys on insert
+            .SetOnInsert(x => x.Nic, o.Nic)
+            .SetOnInsert(x => x.Id, ObjectId.GenerateNewId().ToString()); 
+
+        await _col.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
+    }
 
     public async Task<bool> ExistsAsync(string nic) =>
         await _col.Find(x => x.Nic == nic).AnyAsync();
