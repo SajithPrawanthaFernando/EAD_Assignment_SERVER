@@ -1,0 +1,16 @@
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\bin\Debug\net8.0\Infra.deps.json
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\bin\Debug\net8.0\Infra.dll
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\bin\Debug\net8.0\Infra.pdb
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\bin\Debug\net8.0\Domain.dll
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\bin\Debug\net8.0\Domain.pdb
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\obj\Debug\net8.0\Infra.csproj.AssemblyReference.cache
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\obj\Debug\net8.0\Infra.GeneratedMSBuildEditorConfig.editorconfig
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\obj\Debug\net8.0\Infra.AssemblyInfoInputs.cache
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\obj\Debug\net8.0\Infra.AssemblyInfo.cs
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\obj\Debug\net8.0\Infra.csproj.CoreCompileInputs.cache
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\obj\Debug\net8.0\Infra.sourcelink.json
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\obj\Debug\net8.0\Infra.csproj.Up2Date
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\obj\Debug\net8.0\Infra.dll
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\obj\Debug\net8.0\refint\Infra.dll
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\obj\Debug\net8.0\Infra.pdb
+D:\GitHub\EAD_Assignment_SERVER\evcharge\src\Infra\obj\Debug\net8.0\ref\Infra.dll
