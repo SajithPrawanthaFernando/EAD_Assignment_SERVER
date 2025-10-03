@@ -14,9 +14,6 @@ public class BookingsController : ControllerBase
     public BookingsController(IBookingService svc) => _svc = svc;
 
     private bool IsBackoffice => User.IsInRole("Backoffice");
-
-    // OPTIONAL HOOK: if you later add NIC claim to JWT for EVOwner users,
-    // pull it from User.Claims; for now we accept null.
     private string? RequesterNic =>
         User.Claims.FirstOrDefault(c => c.Type == "nic")?.Value;
 
