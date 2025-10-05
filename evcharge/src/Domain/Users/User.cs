@@ -13,4 +13,7 @@ public sealed class User
     public string PasswordHash { get; set; } = default!;
     public Role[] Roles { get; set; } = Array.Empty<Role>();
     public bool Active { get; set; } = true;
+
+    [BsonElement("ownerNic")]
+    public string? OwnerNic { get; set; }
 }
