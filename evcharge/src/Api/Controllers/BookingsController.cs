@@ -7,16 +7,17 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/bookings")]
-[Authorize]
+[Authorize(Roles = "Backoffice,EVOwner")]
 public class BookingsController : ControllerBase
 {
     private readonly IBookingService _svc;
     public BookingsController(IBookingService svc) => _svc = svc;
 
-    private bool IsBackoffice => User.IsInRole("Backoffice");
+    private bool IsBackoffice => User.IsInRole("Backoffice") || User.IsInRole("EVOwner");
     private string? RequesterNic =>
         User.Claims.FirstOrDefault(c => c.Type == "nic")?.Value;
 
+    // Create booking 
     [HttpPost]
     public async Task<ActionResult<object>> Create([FromBody] BookingCreateDto dto)
     {
@@ -30,11 +31,12 @@ public class BookingsController : ControllerBase
             return Conflict(new { message = ex.Message });
         }
         catch (UnauthorizedAccessException ex)
-        {
-            return Forbid(ex.Message);
-        }
+{
+    return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+}
     }
 
+    // Update booking 
     [HttpPatch]
     public async Task<IActionResult> Update([FromBody] BookingUpdateDto dto)
     {
@@ -48,15 +50,15 @@ public class BookingsController : ControllerBase
             return Conflict(new { message = ex.Message });
         }
         catch (UnauthorizedAccessException ex)
-        {
-            return Forbid(ex.Message);
-        }
+{
+    return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+}
     }
 
+    // Cancel booking 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Cancel(string id)
     {
-
         try
         {
             await _svc.CancelAsync(id, RequesterNic, IsBackoffice);
@@ -67,15 +69,20 @@ public class BookingsController : ControllerBase
             return Conflict(new { message = ex.Message });
         }
         catch (UnauthorizedAccessException ex)
-        {
-            return Forbid(ex.Message);
-        }
+{
+    return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+}
     }
 
+    // View my own bookings 
     [HttpGet("mine/{ownerNic}")]
     public async Task<ActionResult<List<BookingView>>> Mine(string ownerNic)
-        => Ok(await _svc.GetMineAsync(ownerNic));
+    {
+        var result = await _svc.GetMineAsync(ownerNic);
+        return Ok(result);
+    }
 
+    // View booking by id
     [HttpGet("{id}")]
     public async Task<ActionResult<BookingView>> GetById(string id)
     {
@@ -83,13 +90,11 @@ public class BookingsController : ControllerBase
         return v is null ? NotFound() : Ok(v);
     }
 
+    // Get all bookings 
     [HttpGet]
-    [Authorize]
     public async Task<ActionResult<List<BookingView>>> GetAll()
     {
         var result = await _svc.GetAllAsync();
         return Ok(result);
     }
-    
-    
 }
