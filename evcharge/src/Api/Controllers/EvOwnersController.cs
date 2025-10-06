@@ -6,13 +6,13 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/ev-owners")]
-[Authorize(Roles = "Backoffice,EVOwner")]
 public class EvOwnersController : ControllerBase
 {
     private readonly IEvOwnerService _svc;
     public EvOwnersController(IEvOwnerService svc) => _svc = svc;
 
     [HttpPut] // upsert
+     [Authorize]
     public async Task<IActionResult> Upsert([FromBody] EvOwnerUpsertDto dto)
     {
         await _svc.UpsertAsync(dto);
@@ -20,7 +20,7 @@ public class EvOwnersController : ControllerBase
     }
 
     [HttpPatch("{nic}/deactivate")]
-
+    [Authorize]
     public async Task<IActionResult> Deactivate(string nic)
     {
         await _svc.DeactivateAsync(nic);
@@ -36,6 +36,7 @@ public class EvOwnersController : ControllerBase
     }
 
     [HttpGet("{nic}")]
+    [Authorize]
     public async Task<ActionResult<EvOwnerView>> Get(string nic)
     {
         var v = await _svc.GetAsync(nic);
