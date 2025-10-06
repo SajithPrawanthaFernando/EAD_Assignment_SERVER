@@ -13,6 +13,8 @@ public interface IBookingRepository
 
     Task ReplaceCoreAsync(Booking b);
     Task<List<Booking>> GetByOwnerAsync(string ownerNic);
+
+    Task<List<Booking>> GetAllAsync();
 }
 
 public sealed class BookingRepository : IBookingRepository
@@ -35,6 +37,13 @@ public sealed class BookingRepository : IBookingRepository
              (x.Status == BookingStatus.Pending || x.Status == BookingStatus.Approved) &&
              x.StartTimeUtc >= nowUtc);
         return await _col.Find(filter).AnyAsync();
+    }
+
+    public async Task<List<Booking>> GetAllAsync()
+    {
+        return await _col.Find(_ => true)
+            .SortByDescending(x => x.StartTimeUtc)
+            .ToListAsync();
     }
 
     public Task ReplaceCoreAsync(Booking b) =>
