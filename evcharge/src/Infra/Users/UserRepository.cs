@@ -14,6 +14,10 @@ public interface IUserRepository
     Task UpsertSeedUserAsync(string email, string passwordHash, Role[] roles);
 
     IMongoCollection<User> Collection { get; }
+
+    Task<List<User>> GetAllAsync();
+    Task<User?> GetByIdAsync(string id);
+    Task<User?> FindByOwnerNicAsync(string nic);
 }
 
 public sealed class UserRepository : IUserRepository
@@ -32,12 +36,25 @@ public sealed class UserRepository : IUserRepository
 
     public async Task<long> CountAsync() => await Collection.CountDocumentsAsync(_ => true);
 
+    public async Task<List<User>> GetAllAsync()
+    {
+        return await Collection.Find(_ => true)
+            .SortBy(x => x.Email)
+            .ToListAsync();
+    }
+
+    public async Task<User?> GetByIdAsync(string id) =>
+        await Collection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+    public async Task<User?> FindByOwnerNicAsync(string nic) =>
+        await Collection.Find(x => x.OwnerNic == nic).FirstOrDefaultAsync();
+
     public Task UpsertSeedUserAsync(string email, string passwordHash, Role[] roles)
     {
         var filter = Builders<User>.Filter.Eq(x => x.Email, email);
 
         var update = Builders<User>.Update
-         
+
             .SetOnInsert(x => x.Id, ObjectId.GenerateNewId().ToString())
             .SetOnInsert(x => x.Email, email)
             .SetOnInsert(x => x.PasswordHash, passwordHash)
@@ -46,4 +63,6 @@ public sealed class UserRepository : IUserRepository
 
         return Collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
     }
+    
+    
 }
