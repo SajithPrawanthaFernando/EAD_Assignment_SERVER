@@ -13,6 +13,8 @@ public interface IEvOwnerService
     Task DeactivateAsync(string nic);
     Task ReactivateAsync(string nic);
     Task<EvOwnerView?> GetAsync(string nic);
+
+    Task<List<EvOwnerView>> GetAllAsync();
 }
 
 public sealed class EvOwnerService : IEvOwnerService
@@ -34,10 +36,10 @@ public sealed class EvOwnerService : IEvOwnerService
         o.Phone = dto.Phone;
         await _repo.UpsertAsync(o);
 
-       
+
         var normalizedEmail = dto.Email?.Trim().ToLowerInvariant();
 
-        
+
         User? existingUser = null;
         if (!string.IsNullOrWhiteSpace(normalizedEmail))
         {
@@ -46,25 +48,25 @@ public sealed class EvOwnerService : IEvOwnerService
 
         if (existingUser is null)
         {
-           
+
             if (string.IsNullOrWhiteSpace(normalizedEmail) || string.IsNullOrWhiteSpace(dto.Password))
                 throw new InvalidOperationException("Email and password are required to create a new owner user.");
 
-          var newUser = new User
-        {
-            Id = Guid.NewGuid().ToString("N"),
-            Email = normalizedEmail!,
-            PasswordHash = PasswordHasher.Hash(dto.Password!),
-            Roles = new[] { Role.EVOwner },
-            Active = true,
-            OwnerNic = dto.Nic        
-        };
+            var newUser = new User
+            {
+                Id = Guid.NewGuid().ToString("N"),
+                Email = normalizedEmail!,
+                PasswordHash = PasswordHasher.Hash(dto.Password!),
+                Roles = new[] { Role.EVOwner },
+                Active = true,
+                OwnerNic = dto.Nic
+            };
 
             await _users.InsertAsync(newUser);
         }
-        
+
     }
-   public async Task DeactivateAsync(string nic)
+    public async Task DeactivateAsync(string nic)
     {
         // Deactivate the owner
         await _repo.SetStatusAsync(nic, EvOwnerStatus.Deactivated);
@@ -93,31 +95,68 @@ public sealed class EvOwnerService : IEvOwnerService
     }
 
 
-   public async Task<EvOwnerView?> GetAsync(string nic)
-{
-    var owner = await _repo.GetAsync(nic);
-    if (owner is null)
-        return null;
-
-    var user = await _users.Collection.Find(x => x.OwnerNic == nic).FirstOrDefaultAsync();
-
-    EvOwnerUserView? userView = null;
-    if (user is not null)
+    public async Task<EvOwnerView?> GetAsync(string nic)
     {
-        userView = new EvOwnerUserView(
-            Email: user.Email,
-            Active: user.Active,
-            Roles: user.Roles.Select(r => r.ToString()).ToArray()
+        var owner = await _repo.GetAsync(nic);
+        if (owner is null)
+            return null;
+
+        var user = await _users.Collection.Find(x => x.OwnerNic == nic).FirstOrDefaultAsync();
+
+        EvOwnerUserView? userView = null;
+        if (user is not null)
+        {
+            userView = new EvOwnerUserView(
+                Email: user.Email,
+                Active: user.Active,
+                Roles: user.Roles.Select(r => r.ToString()).ToArray()
+            );
+        }
+
+        return new EvOwnerView(
+            Nic: owner.Nic,
+            Name: owner.Name,
+            Phone: owner.Phone,
+            Status: owner.Status.ToString(),
+            User: userView
         );
     }
 
-    return new EvOwnerView(
-        Nic: owner.Nic,
-        Name: owner.Name,
-        Phone: owner.Phone,
-        Status: owner.Status.ToString(),
-        User: userView
-    );
-}
+    public async Task<List<EvOwnerView>> GetAllAsync()
+        {
+            var owners = await _repo.GetAllAsync();
+            if (owners.Count == 0) return new List<EvOwnerView>();
+
+            var nics = owners.Select(o => o.Nic).ToList();
+
+           
+            var userList = await _users.Collection
+                .Find(u => u.OwnerNic != null && nics.Contains(u.OwnerNic))
+                .ToListAsync();
+
+            var usersByNic = userList
+                .Where(u => !string.IsNullOrEmpty(u.OwnerNic))
+                .ToDictionary(u => u.OwnerNic!);
+
+            return owners.Select(o =>
+            {
+                usersByNic.TryGetValue(o.Nic, out var u);
+                EvOwnerUserView? uv = u is null
+                    ? null
+                    : new EvOwnerUserView(
+                        Email: u.Email,
+                        Active: u.Active,
+                        Roles: u.Roles.Select(r => r.ToString()).ToArray()
+                      );
+
+                return new EvOwnerView(
+                    Nic: o.Nic,
+                    Name: o.Name,
+                    Phone: o.Phone,
+                    Status: o.Status.ToString(),
+                    User: uv
+                );
+            }).ToList();
+        }
 
 }
