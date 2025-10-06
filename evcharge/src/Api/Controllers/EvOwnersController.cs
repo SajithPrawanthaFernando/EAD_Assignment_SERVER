@@ -6,7 +6,6 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/ev-owners")]
-[Authorize(Roles = "Backoffice,EVOwner")]
 public class EvOwnersController : ControllerBase
 {
     private readonly IEvOwnerService _svc;
