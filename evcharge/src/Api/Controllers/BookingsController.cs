@@ -7,7 +7,7 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/bookings")]
-[Authorize] // any authenticated user; we check role inside
+[Authorize]
 public class BookingsController : ControllerBase
 {
     private readonly IBookingService _svc;
@@ -80,5 +80,13 @@ public class BookingsController : ControllerBase
     {
         var v = await _svc.GetByIdAsync(id);
         return v is null ? NotFound() : Ok(v);
+    }
+    
+    [HttpGet]
+    [Authorize]
+    public async Task<ActionResult<List<BookingView>>> GetAll()
+    {
+        var result = await _svc.GetAllAsync();
+        return Ok(result);
     }
 }
