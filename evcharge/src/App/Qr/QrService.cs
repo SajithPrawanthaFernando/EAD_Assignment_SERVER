@@ -4,14 +4,15 @@ using Domain.Qr;
 using Infra.Bookings;
 using Infra.Qr;
 using Infra.Schedules;
+using Infra.Stations;  
 
 namespace App.Qr;
 
 public interface IQrService
 {
-    Task<string> IssueForBookingAsync(string bookingId, DateTime expUtc);        // Backoffice only
-    Task<(string BookingId, bool Valid)> VerifyAsync(string token);               // Operator scan
-    Task FinalizeAsync(string bookingId);                                         // Operator finalize
+    Task<string> IssueForBookingAsync(string bookingId, DateTime expUtc);  
+    Task<(string BookingId, bool Valid)> VerifyAsync(string token);         
+    Task FinalizeAsync(string bookingId);                                  
 }
 
 public sealed class QrService : IQrService
@@ -19,15 +20,23 @@ public sealed class QrService : IQrService
     private readonly IQrRepository _qr;
     private readonly IBookingRepository _bookings;
     private readonly IScheduleRepository _schedules;
+    private readonly IStationRepository _stations;  
 
-    public QrService(IQrRepository qr, IBookingRepository bookings, IScheduleRepository schedules)
+    public QrService(
+        IQrRepository qr,
+        IBookingRepository bookings,
+        IScheduleRepository schedules,
+        IStationRepository stations)              
     {
-        _qr = qr; _bookings = bookings; _schedules = schedules;
+        _qr = qr;
+        _bookings = bookings;
+        _schedules = schedules;
+        _stations = stations;                       
     }
 
     public async Task<string> IssueForBookingAsync(string bookingId, DateTime expUtc)
     {
-        //  ensure booking exists and is Approved
+        // Ensure booking exists and is valid
         var b = await _bookings.GetAsync(bookingId) ?? throw new InvalidOperationException("Booking not found.");
         if (b.Status != BookingStatus.Approved && b.Status != BookingStatus.Pending)
             throw new InvalidOperationException("Booking not in a state to issue QR.");
@@ -49,7 +58,7 @@ public sealed class QrService : IQrService
 
         if (DateTime.UtcNow > t.ExpUtc) return (t.BookingId, false);
 
-        // Also confirm booking still active
+        // Confirm booking still active
         var b = await _bookings.GetAsync(t.BookingId);
         if (b is null) return (t.BookingId, false);
         if (b.Status == BookingStatus.Cancelled) return (t.BookingId, false);
@@ -60,8 +69,14 @@ public sealed class QrService : IQrService
     public async Task FinalizeAsync(string bookingId)
     {
         var b = await _bookings.GetAsync(bookingId) ?? throw new InvalidOperationException("Booking not found.");
-        // Set completed + free the slot
+
+        // Mark booking as completed
         await _bookings.UpdateStatusAsync(bookingId, BookingStatus.Completed);
+
+        // Free up the schedule
         await _schedules.SetAvailabilityAsync(b.StationId, b.SlotId, b.StartTimeUtc, true);
+
+        // Free up the actual slot
+        await _stations.SetSlotAvailabilityAsync(b.StationId, b.SlotId, true);
     }
 }

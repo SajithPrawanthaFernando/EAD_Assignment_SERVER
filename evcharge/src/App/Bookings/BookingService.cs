@@ -1,6 +1,7 @@
 using Domain.Bookings;
 using Infra.Bookings;
 using Infra.Schedules;
+using Infra.Stations;
 
 namespace App.Bookings;
 
@@ -11,19 +12,23 @@ public interface IBookingService
     Task CancelAsync(string id, string? requesterNic, bool isBackoffice);
     Task<List<BookingView>> GetMineAsync(string ownerNic);
     Task<BookingView?> GetByIdAsync(string id);
-
     Task<List<BookingView>> GetAllAsync();
-    
 }
 
 public sealed class BookingService : IBookingService
 {
     private readonly IBookingRepository _bookings;
     private readonly IScheduleRepository _schedules;
+    private readonly IStationRepository _stations;          
 
-    public BookingService(IBookingRepository bookings, IScheduleRepository schedules)
+    public BookingService(
+        IBookingRepository bookings,
+        IScheduleRepository schedules,
+        IStationRepository stations)                          
     {
-        _bookings = bookings; _schedules = schedules;
+        _bookings = bookings;
+        _schedules = schedules;
+        _stations = stations;                                 
     }
 
     private static bool Within7Days(DateTime startUtc)
@@ -61,8 +66,11 @@ public sealed class BookingService : IBookingService
         };
 
         await _bookings.InsertAsync(booking);
-        // lock the schedule immediately
+
+        // lock the schedule and mark slot unavailable
         await _schedules.SetAvailabilityAsync(dto.StationId, dto.SlotId, dto.StartTimeUtc, false);
+        await _stations.SetSlotAvailabilityAsync(dto.StationId, dto.SlotId, false); 
+
         return id;
     }
 
@@ -77,23 +85,36 @@ public sealed class BookingService : IBookingService
         if (!Within7Days(dto.StartTimeUtc))
             throw new InvalidOperationException("Updated time must be within 7 days from now.");
 
-        // Free previous slot time
-        await _schedules.SetAvailabilityAsync(existing.StationId, existing.SlotId, existing.StartTimeUtc, true);
+        // Determine if target slot/time actually changes
+        var isSameStation = string.Equals(existing.StationId, dto.StationId, StringComparison.Ordinal);
+        var isSameSlot    = string.Equals(existing.SlotId, dto.SlotId, StringComparison.Ordinal);
+        var isSameTime    = existing.StartTimeUtc == dto.StartTimeUtc;
+        var changesTarget = !(isSameStation && isSameSlot && isSameTime);
 
-        // Check new slot time availability
-        var available = await _schedules.IsAvailableAsync(dto.StationId, dto.SlotId, dto.StartTimeUtc);
-        if (!available) throw new InvalidOperationException("Selected slot is not available.");
+        if (changesTarget)
+        {
+            // Free previous slot/time + mark slot available
+            await _schedules.SetAvailabilityAsync(existing.StationId, existing.SlotId, existing.StartTimeUtc, true);
+            await _stations.SetSlotAvailabilityAsync(existing.StationId, existing.SlotId, true); 
 
-        // Update booking core fields 
-        existing.StationId = dto.StationId;
-        existing.SlotId = dto.SlotId;
+            // Check new slot/time availability
+            var available = await _schedules.IsAvailableAsync(dto.StationId, dto.SlotId, dto.StartTimeUtc);
+            if (!available) throw new InvalidOperationException("Selected slot is not available.");
+        }
+
+        // Update booking core fields
+        existing.StationId    = dto.StationId;
+        existing.SlotId       = dto.SlotId;
         existing.StartTimeUtc = dto.StartTimeUtc;
-
 
         await _bookings.UpdateCoreAsync(existing);
 
-        // Lock new slot time
-        await _schedules.SetAvailabilityAsync(dto.StationId, dto.SlotId, dto.StartTimeUtc, false);
+        if (changesTarget)
+        {
+            // Lock new slot/time + mark slot unavailable
+            await _schedules.SetAvailabilityAsync(dto.StationId, dto.SlotId, dto.StartTimeUtc, false);
+            await _stations.SetSlotAvailabilityAsync(dto.StationId, dto.SlotId, false); 
+        }
     }
 
     public async Task CancelAsync(string id, string? requesterNic, bool isBackoffice)
@@ -105,7 +126,10 @@ public sealed class BookingService : IBookingService
             throw new InvalidOperationException("Cannot cancel within 12 hours of start.");
 
         await _bookings.UpdateStatusAsync(id, BookingStatus.Cancelled);
+
+        // free schedule + mark slot available
         await _schedules.SetAvailabilityAsync(b.StationId, b.SlotId, b.StartTimeUtc, true);
+        await _stations.SetSlotAvailabilityAsync(b.StationId, b.SlotId, true); 
     }
 
     public async Task<List<BookingView>> GetMineAsync(string ownerNic)
@@ -119,22 +143,16 @@ public sealed class BookingService : IBookingService
         var b = await _bookings.GetAsync(id);
         return b is null ? null : new BookingView(b.Id, b.OwnerNic, b.StationId, b.SlotId, b.StartTimeUtc, b.Status.ToString());
     }
-    
+
     public async Task<List<BookingView>> GetAllAsync()
     {
         var list = await _bookings.GetAllAsync();
         return list
-            .Select(b => new BookingView(
-                b.Id,
-                b.OwnerNic,
-                b.StationId,
-                b.SlotId,
-                b.StartTimeUtc,
-                b.Status.ToString()))
+            .Select(b => new BookingView(b.Id, b.OwnerNic, b.StationId, b.SlotId, b.StartTimeUtc, b.Status.ToString()))
             .ToList();
     }
-
 }
+
 
 
 public static class BookingRepositoryExtensions

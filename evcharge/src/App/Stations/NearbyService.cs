@@ -17,15 +17,16 @@ public sealed class NearbyStations : INearbyStations
         const double R = 6371.0; // km
         double dLat = (lat2 - lat1) * Math.PI / 180.0;
         double dLng = (lng2 - lng1) * Math.PI / 180.0;
-        double a = Math.Sin(dLat/2)*Math.Sin(dLat/2) +
-                   Math.Cos(lat1*Math.PI/180.0)*Math.Cos(lat2*Math.PI/180.0) *
-                   Math.Sin(dLng/2)*Math.Sin(dLng/2);
-        return R * 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1-a));
+        double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                   Math.Cos(lat1 * Math.PI / 180.0) * Math.Cos(lat2 * Math.PI / 180.0) *
+                   Math.Sin(dLng / 2) * Math.Sin(dLng / 2);
+        return R * 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
     }
 
     public async Task<List<StationView>> FindAsync(double lat, double lng, double radiusKm)
     {
         var all = await _repo.GetAllAsync();
+
         var nearby = all
             .Where(s => s.Active)
             .Select(s => new
@@ -36,8 +37,15 @@ public sealed class NearbyStations : INearbyStations
             .Where(x => x.D <= radiusKm)
             .OrderBy(x => x.D)
             .Select(x => new StationView(
-                x.S.Id, x.S.Name, x.S.Type.ToString(), x.S.Active, x.S.Lat, x.S.Lng,
-                x.S.Slots.Select(sl => new StationSlotDto(sl.SlotId, sl.Label)).ToList()
+                x.S.Id,
+                x.S.Name,
+                x.S.Type.ToString(),
+                x.S.Active,
+                x.S.Lat,
+                x.S.Lng,
+                x.S.Slots.Select(sl =>
+                    new StationSlotDto(sl.SlotId, sl.Label, sl.Available) 
+                ).ToList()
             ))
             .ToList();
 

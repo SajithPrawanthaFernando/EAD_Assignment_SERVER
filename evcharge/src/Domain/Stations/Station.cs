@@ -18,4 +18,5 @@ public sealed class StationSlot
 {
     public string SlotId { get; set; } = default!;
     public string Label { get; set; } = default!;
+     public bool Available { get; set; } = true;
 }
