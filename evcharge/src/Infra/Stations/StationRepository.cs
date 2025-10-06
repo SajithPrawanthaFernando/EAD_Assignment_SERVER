@@ -11,6 +11,8 @@ public interface IStationRepository
     Task UpdateAsync(Station s);
     Task<List<Station>> GetAllAsync();
     Task SetActiveAsync(string id, bool active);
+
+    Task SetSlotAvailabilityAsync(string stationId, string slotId, bool available);
 }
 
 public sealed class StationRepository : IStationRepository
@@ -30,4 +32,15 @@ public sealed class StationRepository : IStationRepository
 
     public Task SetActiveAsync(string id, bool active) =>
         _col.UpdateOneAsync(x => x.Id == id, Builders<Station>.Update.Set(x => x.Active, active));
+
+    public async Task SetSlotAvailabilityAsync(string stationId, string slotId, bool available)
+{
+    var filter = Builders<Station>.Filter.And(
+        Builders<Station>.Filter.Eq(s => s.Id, stationId),
+        Builders<Station>.Filter.ElemMatch(s => s.Slots, x => x.SlotId == slotId)
+    );
+
+    var update = Builders<Station>.Update.Set("Slots.$.Available", available);
+    await _col.UpdateOneAsync(filter, update);
+}
 }
