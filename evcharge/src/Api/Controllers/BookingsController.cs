@@ -56,6 +56,7 @@ public class BookingsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Cancel(string id)
     {
+
         try
         {
             await _svc.CancelAsync(id, RequesterNic, IsBackoffice);
@@ -81,7 +82,7 @@ public class BookingsController : ControllerBase
         var v = await _svc.GetByIdAsync(id);
         return v is null ? NotFound() : Ok(v);
     }
-    
+
     [HttpGet]
     [Authorize]
     public async Task<ActionResult<List<BookingView>>> GetAll()
@@ -89,4 +90,6 @@ public class BookingsController : ControllerBase
         var result = await _svc.GetAllAsync();
         return Ok(result);
     }
+    
+    
 }
