@@ -6,7 +6,7 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/ev-owners")]
-[Authorize(Roles = "Backoffice")]
+[Authorize(Roles = "Backoffice,EVOwner")]
 public class EvOwnersController : ControllerBase
 {
     private readonly IEvOwnerService _svc;
@@ -20,6 +20,7 @@ public class EvOwnersController : ControllerBase
     }
 
     [HttpPatch("{nic}/deactivate")]
+
     public async Task<IActionResult> Deactivate(string nic)
     {
         await _svc.DeactivateAsync(nic);
@@ -27,6 +28,7 @@ public class EvOwnersController : ControllerBase
     }
 
     [HttpPatch("{nic}/reactivate")]
+    [Authorize(Roles = "Backoffice")]
     public async Task<IActionResult> Reactivate(string nic)
     {
         await _svc.ReactivateAsync(nic);

@@ -93,9 +93,31 @@ public sealed class EvOwnerService : IEvOwnerService
     }
 
 
-    public async Task<EvOwnerView?> GetAsync(string nic)
+   public async Task<EvOwnerView?> GetAsync(string nic)
+{
+    var owner = await _repo.GetAsync(nic);
+    if (owner is null)
+        return null;
+
+    var user = await _users.Collection.Find(x => x.OwnerNic == nic).FirstOrDefaultAsync();
+
+    EvOwnerUserView? userView = null;
+    if (user is not null)
     {
-        var o = await _repo.GetAsync(nic);
-        return o is null ? null : new EvOwnerView(o.Nic, o.Name, o.Phone, o.Status.ToString());
+        userView = new EvOwnerUserView(
+            Email: user.Email,
+            Active: user.Active,
+            Roles: user.Roles.Select(r => r.ToString()).ToArray()
+        );
     }
+
+    return new EvOwnerView(
+        Nic: owner.Nic,
+        Name: owner.Name,
+        Phone: owner.Phone,
+        Status: owner.Status.ToString(),
+        User: userView
+    );
+}
+
 }
