@@ -8,9 +8,11 @@ namespace Infra.EvOwners;
 public interface IEvOwnerRepository
 {
     Task<EvOwner?> GetAsync(string nic);
-    Task UpsertAsync(EvOwner owner);           
+    Task UpsertAsync(EvOwner owner);
     Task<bool> ExistsAsync(string nic);
     Task SetStatusAsync(string nic, EvOwnerStatus status);
+    
+     Task<List<EvOwner>> GetAllAsync();
 }
 
 public sealed class EvOwnerRepository : IEvOwnerRepository
@@ -32,7 +34,7 @@ public sealed class EvOwnerRepository : IEvOwnerRepository
             .Set(x => x.Status, o.Status)
             // ensure keys on insert
             .SetOnInsert(x => x.Nic, o.Nic)
-            .SetOnInsert(x => x.Id, ObjectId.GenerateNewId().ToString()); 
+            .SetOnInsert(x => x.Id, ObjectId.GenerateNewId().ToString());
 
         await _col.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
     }
@@ -42,4 +44,7 @@ public sealed class EvOwnerRepository : IEvOwnerRepository
 
     public Task SetStatusAsync(string nic, EvOwnerStatus status) =>
         _col.UpdateOneAsync(x => x.Nic == nic, Builders<EvOwner>.Update.Set(x => x.Status, status));
+        
+    public async Task<List<EvOwner>> GetAllAsync() =>
+        await _col.Find(_ => true).SortBy(x => x.Nic).ToListAsync();
 }

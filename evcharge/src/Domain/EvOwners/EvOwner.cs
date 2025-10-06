@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Domain.EvOwners;
 
-
+[BsonIgnoreExtraElements]
 public sealed class EvOwner
 {
     

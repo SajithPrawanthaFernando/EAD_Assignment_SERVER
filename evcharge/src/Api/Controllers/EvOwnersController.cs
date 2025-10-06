@@ -12,7 +12,7 @@ public class EvOwnersController : ControllerBase
     public EvOwnersController(IEvOwnerService svc) => _svc = svc;
 
     [HttpPut] // upsert
-     [Authorize]
+    [Authorize]
     public async Task<IActionResult> Upsert([FromBody] EvOwnerUpsertDto dto)
     {
         await _svc.UpsertAsync(dto);
@@ -42,4 +42,9 @@ public class EvOwnersController : ControllerBase
         var v = await _svc.GetAsync(nic);
         return v is null ? NotFound() : Ok(v);
     }
+    
+     [HttpGet]
+        [Authorize(Roles = "Backoffice")]
+        public async Task<ActionResult<List<EvOwnerView>>> GetAll()
+            => Ok(await _svc.GetAllAsync());
 }
