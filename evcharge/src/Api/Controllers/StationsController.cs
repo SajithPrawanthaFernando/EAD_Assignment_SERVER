@@ -6,13 +6,14 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/stations")]
-[Authorize(Roles = "Backoffice")]
+[Authorize]
 public class StationsController : ControllerBase
 {
     private readonly IStationService _svc;
     public StationsController(IStationService svc) => _svc = svc;
 
     [HttpPost]
+    [Authorize(Roles = "Backoffice")]
     public async Task<ActionResult<string>> Create([FromBody] StationCreateDto dto)
     {
         var id = await _svc.CreateAsync(dto);
@@ -20,6 +21,7 @@ public class StationsController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Roles = "Backoffice")]
     public async Task<IActionResult> Update([FromBody] StationUpdateDto dto)
     {
         await _svc.UpdateAsync(dto);
@@ -27,10 +29,12 @@ public class StationsController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<List<StationView>>> GetAll() =>
         Ok(await _svc.GetAllAsync());
 
     [HttpPatch("{id}/deactivate")]
+    [Authorize(Roles = "Backoffice")]
     public async Task<IActionResult> Deactivate(string id)
     {
         try
@@ -45,6 +49,7 @@ public class StationsController : ControllerBase
     }
 
     [HttpPatch("{id}/activate")]
+    [Authorize(Roles = "Backoffice")]
     public async Task<IActionResult> Activate(string id)
     {
         await _svc.SetActiveAsync(id, true);
