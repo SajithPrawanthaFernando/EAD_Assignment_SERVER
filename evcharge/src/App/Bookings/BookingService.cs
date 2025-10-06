@@ -11,6 +11,9 @@ public interface IBookingService
     Task CancelAsync(string id, string? requesterNic, bool isBackoffice);
     Task<List<BookingView>> GetMineAsync(string ownerNic);
     Task<BookingView?> GetByIdAsync(string id);
+
+    Task<List<BookingView>> GetAllAsync();
+    
 }
 
 public sealed class BookingService : IBookingService
@@ -85,9 +88,9 @@ public sealed class BookingService : IBookingService
         existing.StationId = dto.StationId;
         existing.SlotId = dto.SlotId;
         existing.StartTimeUtc = dto.StartTimeUtc;
-   
 
-        await _bookings.UpdateCoreAsync(existing); 
+
+        await _bookings.UpdateCoreAsync(existing);
 
         // Lock new slot time
         await _schedules.SetAvailabilityAsync(dto.StationId, dto.SlotId, dto.StartTimeUtc, false);
@@ -116,6 +119,21 @@ public sealed class BookingService : IBookingService
         var b = await _bookings.GetAsync(id);
         return b is null ? null : new BookingView(b.Id, b.OwnerNic, b.StationId, b.SlotId, b.StartTimeUtc, b.Status.ToString());
     }
+    
+    public async Task<List<BookingView>> GetAllAsync()
+    {
+        var list = await _bookings.GetAllAsync();
+        return list
+            .Select(b => new BookingView(
+                b.Id,
+                b.OwnerNic,
+                b.StationId,
+                b.SlotId,
+                b.StartTimeUtc,
+                b.Status.ToString()))
+            .ToList();
+    }
+
 }
 
 
