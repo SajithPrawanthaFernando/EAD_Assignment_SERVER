@@ -40,10 +40,20 @@ builder.Services.AddSingleton<IQrRepository, QrRepository>();
 builder.Services.AddSingleton<IQrService, QrService>();
 builder.Services.AddSingleton<INearbyStations, NearbyStations>();
 
+var frontendUrl = "http://localhost:5173";
 // JWT Auth
 var jwtKey = builder.Configuration["Jwt:Key"]!;
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(frontendUrl)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -84,7 +94,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
-
+app.UseCors("AllowFrontend"); 
 // Ensure indexes on startup
 using (var scope = app.Services.CreateScope())
 {
