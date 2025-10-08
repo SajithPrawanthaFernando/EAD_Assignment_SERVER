@@ -2,16 +2,22 @@ using System.Security.Claims;
 using App.Bookings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using App.Qr;
 
 namespace Api.Controllers;
 
 [ApiController]
 [Route("api/bookings")]
-[Authorize(Roles = "Backoffice,EVOwner")]
+[Authorize(Roles = "Backoffice,EVOwner,StationOperator")]
 public class BookingsController : ControllerBase
 {
     private readonly IBookingService _svc;
-    public BookingsController(IBookingService svc) => _svc = svc;
+    private readonly IQrService _qr;
+   public BookingsController(IBookingService svc, IQrService qr)
+    {
+        _svc = svc;
+        _qr  = qr; 
+    }
 
     private bool IsBackoffice => User.IsInRole("Backoffice") || User.IsInRole("EVOwner");
     private string? RequesterNic =>
@@ -97,11 +103,46 @@ public class BookingsController : ControllerBase
         var result = await _svc.GetAllAsync();
         return Ok(result);
     }
-    
+
     [HttpGet("mine/{ownerNic}/detail")]
     public async Task<ActionResult<List<BookingWithStationView>>> MineWithStation(string ownerNic)
     {
         var result = await _svc.GetMineWithStationAsync(ownerNic);
         return Ok(result);
+    }
+    
+    [HttpPatch("{id}/approve")]
+    [Authorize(Roles = "Backoffice")]
+    public async Task<IActionResult> Approve(string id)
+    {
+        try
+        {
+            await _svc.ApproveAsync(id);
+            return NoContent();
+        }
+        catch (InvalidOperationException ex) { return Conflict(new { message = ex.Message }); }
+    }
+    
+    [HttpPatch("{id}/start-charging")]
+    public async Task<IActionResult> StartCharging(string id)
+    {
+        try
+        {
+            await _qr.StartChargingAsync(id);
+            return NoContent();
+        }
+        catch (InvalidOperationException ex) { return Conflict(new { message = ex.Message }); }
+    }
+
+
+    [HttpPatch("{id}/complete")]
+    public async Task<IActionResult> Complete(string id)
+    {
+        try
+        {
+            await _svc.CompleteAsync(id); 
+            return NoContent();
+        }
+        catch (InvalidOperationException ex) { return Conflict(new { message = ex.Message }); }
     }
 }
