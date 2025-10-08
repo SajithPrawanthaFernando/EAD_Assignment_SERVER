@@ -1,3 +1,4 @@
+using App.Stations;
 using Domain.Bookings;
 using Infra.Bookings;
 using Infra.Schedules;
@@ -13,22 +14,24 @@ public interface IBookingService
     Task<List<BookingView>> GetMineAsync(string ownerNic);
     Task<BookingView?> GetByIdAsync(string id);
     Task<List<BookingView>> GetAllAsync();
+
+    Task<List<BookingWithStationView>> GetMineWithStationAsync(string ownerNic);
 }
 
 public sealed class BookingService : IBookingService
 {
     private readonly IBookingRepository _bookings;
     private readonly IScheduleRepository _schedules;
-    private readonly IStationRepository _stations;          
+    private readonly IStationRepository _stations;
 
     public BookingService(
         IBookingRepository bookings,
         IScheduleRepository schedules,
-        IStationRepository stations)                          
+        IStationRepository stations)
     {
         _bookings = bookings;
         _schedules = schedules;
-        _stations = stations;                                 
+        _stations = stations;
     }
 
     private static bool Within7Days(DateTime startUtc)
@@ -69,7 +72,7 @@ public sealed class BookingService : IBookingService
 
         // lock the schedule and mark slot unavailable
         await _schedules.SetAvailabilityAsync(dto.StationId, dto.SlotId, dto.StartTimeUtc, false);
-        await _stations.SetSlotAvailabilityAsync(dto.StationId, dto.SlotId, false); 
+        await _stations.SetSlotAvailabilityAsync(dto.StationId, dto.SlotId, false);
 
         return id;
     }
@@ -87,15 +90,15 @@ public sealed class BookingService : IBookingService
 
         // Determine if target slot/time actually changes
         var isSameStation = string.Equals(existing.StationId, dto.StationId, StringComparison.Ordinal);
-        var isSameSlot    = string.Equals(existing.SlotId, dto.SlotId, StringComparison.Ordinal);
-        var isSameTime    = existing.StartTimeUtc == dto.StartTimeUtc;
+        var isSameSlot = string.Equals(existing.SlotId, dto.SlotId, StringComparison.Ordinal);
+        var isSameTime = existing.StartTimeUtc == dto.StartTimeUtc;
         var changesTarget = !(isSameStation && isSameSlot && isSameTime);
 
         if (changesTarget)
         {
             // Free previous slot/time + mark slot available
             await _schedules.SetAvailabilityAsync(existing.StationId, existing.SlotId, existing.StartTimeUtc, true);
-            await _stations.SetSlotAvailabilityAsync(existing.StationId, existing.SlotId, true); 
+            await _stations.SetSlotAvailabilityAsync(existing.StationId, existing.SlotId, true);
 
             // Check new slot/time availability
             var available = await _schedules.IsAvailableAsync(dto.StationId, dto.SlotId, dto.StartTimeUtc);
@@ -103,8 +106,8 @@ public sealed class BookingService : IBookingService
         }
 
         // Update booking core fields
-        existing.StationId    = dto.StationId;
-        existing.SlotId       = dto.SlotId;
+        existing.StationId = dto.StationId;
+        existing.SlotId = dto.SlotId;
         existing.StartTimeUtc = dto.StartTimeUtc;
 
         await _bookings.UpdateCoreAsync(existing);
@@ -113,7 +116,7 @@ public sealed class BookingService : IBookingService
         {
             // Lock new slot/time + mark slot unavailable
             await _schedules.SetAvailabilityAsync(dto.StationId, dto.SlotId, dto.StartTimeUtc, false);
-            await _stations.SetSlotAvailabilityAsync(dto.StationId, dto.SlotId, false); 
+            await _stations.SetSlotAvailabilityAsync(dto.StationId, dto.SlotId, false);
         }
     }
 
@@ -129,7 +132,7 @@ public sealed class BookingService : IBookingService
 
         // free schedule + mark slot available
         await _schedules.SetAvailabilityAsync(b.StationId, b.SlotId, b.StartTimeUtc, true);
-        await _stations.SetSlotAvailabilityAsync(b.StationId, b.SlotId, true); 
+        await _stations.SetSlotAvailabilityAsync(b.StationId, b.SlotId, true);
     }
 
     public async Task<List<BookingView>> GetMineAsync(string ownerNic)
@@ -151,6 +154,50 @@ public sealed class BookingService : IBookingService
             .Select(b => new BookingView(b.Id, b.OwnerNic, b.StationId, b.SlotId, b.StartTimeUtc, b.Status.ToString()))
             .ToList();
     }
+    
+    public async Task<List<BookingWithStationView>> GetMineWithStationAsync(string ownerNic)
+{
+    var bookings = await _bookings.GetByOwnerAsync(ownerNic);
+
+    // Load distinct stations once
+    var stationIds = bookings.Select(b => b.StationId).Distinct().ToList();
+    var stationMap = new Dictionary<string, Domain.Stations.Station>();
+    foreach (var sid in stationIds)
+    {
+        var s = await _stations.GetAsync(sid); 
+        if (s is not null) stationMap[sid] = s;
+    }
+
+  
+    var list = new List<BookingWithStationView>(bookings.Count);
+    foreach (var b in bookings)
+    {
+        stationMap.TryGetValue(b.StationId, out var s);
+
+        StationView stationView = s is null
+            ? new StationView("", "", "", false, 0, 0, new List<StationSlotDto>())
+            : new StationView(
+                s.Id,
+                s.Name,
+                s.Type.ToString(),
+                s.Active,
+                s.Lat,
+                s.Lng,
+                s.Slots.Select(sl => new StationSlotDto(sl.SlotId, sl.Label, sl.Available)).ToList()
+              );
+
+        list.Add(new BookingWithStationView(
+            Id:           b.Id,
+            OwnerNic:     b.OwnerNic,
+            SlotId:       b.SlotId,
+            StartTimeUtc: b.StartTimeUtc,
+            Status:       b.Status.ToString(),
+            Station:      stationView
+        ));
+    }
+
+    return list;
+}
 }
 
 
