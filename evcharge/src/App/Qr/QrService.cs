@@ -10,9 +10,12 @@ namespace App.Qr;
 
 public interface IQrService
 {
-    Task<string> IssueForBookingAsync(string bookingId, DateTime expUtc);  
-    Task<(string BookingId, bool Valid)> VerifyAsync(string token);         
-    Task FinalizeAsync(string bookingId);                                  
+    Task<string> IssueForBookingAsync(string bookingId, DateTime expUtc);
+    Task<(string BookingId, bool Valid)> VerifyAsync(string token);
+
+    Task StartChargingAsync(string bookingId);
+
+    Task CompleteAsync(string bookingId);                             
 }
 
 public sealed class QrService : IQrService
@@ -20,18 +23,18 @@ public sealed class QrService : IQrService
     private readonly IQrRepository _qr;
     private readonly IBookingRepository _bookings;
     private readonly IScheduleRepository _schedules;
-    private readonly IStationRepository _stations;  
+    private readonly IStationRepository _stations;
 
     public QrService(
         IQrRepository qr,
         IBookingRepository bookings,
         IScheduleRepository schedules,
-        IStationRepository stations)              
+        IStationRepository stations)
     {
         _qr = qr;
         _bookings = bookings;
         _schedules = schedules;
-        _stations = stations;                       
+        _stations = stations;
     }
 
     public async Task<string> IssueForBookingAsync(string bookingId, DateTime expUtc)
@@ -65,18 +68,28 @@ public sealed class QrService : IQrService
 
         return (t.BookingId, true);
     }
-
-    public async Task FinalizeAsync(string bookingId)
+    
+     public async Task StartChargingAsync(string bookingId)
     {
         var b = await _bookings.GetAsync(bookingId) ?? throw new InvalidOperationException("Booking not found.");
 
-        // Mark booking as completed
+        if (b.Status != BookingStatus.Approved && b.Status != BookingStatus.Pending)
+            throw new InvalidOperationException("Booking must be Approved (or Pending if you allow) before starting charge.");
+
+        
+        await _bookings.UpdateStatusAsync(bookingId, BookingStatus.Charging);
+    }
+
+    public async Task CompleteAsync(string bookingId)
+    {
+        var b = await _bookings.GetAsync(bookingId) ?? throw new InvalidOperationException("Booking not found.");
+        if (b.Status != BookingStatus.Charging)
+            throw new InvalidOperationException("Only Charging bookings can be completed.");
+
         await _bookings.UpdateStatusAsync(bookingId, BookingStatus.Completed);
 
-        // Free up the schedule
+        
         await _schedules.SetAvailabilityAsync(b.StationId, b.SlotId, b.StartTimeUtc, true);
-
-        // Free up the actual slot
         await _stations.SetSlotAvailabilityAsync(b.StationId, b.SlotId, true);
     }
 }

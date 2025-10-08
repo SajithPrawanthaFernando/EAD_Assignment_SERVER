@@ -24,7 +24,7 @@ public class QrController : ControllerBase
     }
 
     // Backoffice: issue a QR for a booking 
-    [Authorize(Roles = "Backoffice")]
+    [Authorize(Roles = "Backoffice,StationOperator")]
     [HttpPost("issue")]
     public async Task<ActionResult<IssueQrResponse>> Issue([FromBody] IssueQrRequest req)
     {
@@ -45,12 +45,4 @@ public class QrController : ControllerBase
         return Ok(new VerifyQrResponse(valid, valid ? bookingId : null));
     }
 
-    // Operator: finalize business after verifying
-    [Authorize(Roles = "StationOperator")]
-    [HttpPost("bookings/{bookingId}/finalize")]
-    public async Task<IActionResult> Finalize(string bookingId)
-    {
-        await _svc.FinalizeAsync(bookingId);
-        return NoContent();
-    }
 }
