@@ -31,9 +31,9 @@ public class BookingsController : ControllerBase
             return Conflict(new { message = ex.Message });
         }
         catch (UnauthorizedAccessException ex)
-{
-    return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
-}
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
     }
 
     // Update booking 
@@ -50,9 +50,9 @@ public class BookingsController : ControllerBase
             return Conflict(new { message = ex.Message });
         }
         catch (UnauthorizedAccessException ex)
-{
-    return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
-}
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
     }
 
     // Cancel booking 
@@ -69,9 +69,9 @@ public class BookingsController : ControllerBase
             return Conflict(new { message = ex.Message });
         }
         catch (UnauthorizedAccessException ex)
-{
-    return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
-}
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+        }
     }
 
     // View my own bookings 
@@ -95,6 +95,13 @@ public class BookingsController : ControllerBase
     public async Task<ActionResult<List<BookingView>>> GetAll()
     {
         var result = await _svc.GetAllAsync();
+        return Ok(result);
+    }
+    
+    [HttpGet("mine/{ownerNic}/detail")]
+    public async Task<ActionResult<List<BookingWithStationView>>> MineWithStation(string ownerNic)
+    {
+        var result = await _svc.GetMineWithStationAsync(ownerNic);
         return Ok(result);
     }
 }
