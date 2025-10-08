@@ -11,8 +11,10 @@ public interface IEvOwnerRepository
     Task UpsertAsync(EvOwner owner);
     Task<bool> ExistsAsync(string nic);
     Task SetStatusAsync(string nic, EvOwnerStatus status);
-    
-     Task<List<EvOwner>> GetAllAsync();
+
+    Task<List<EvOwner>> GetAllAsync();
+     
+    Task DeleteAsync(string nic);
 }
 
 public sealed class EvOwnerRepository : IEvOwnerRepository
@@ -44,7 +46,10 @@ public sealed class EvOwnerRepository : IEvOwnerRepository
 
     public Task SetStatusAsync(string nic, EvOwnerStatus status) =>
         _col.UpdateOneAsync(x => x.Nic == nic, Builders<EvOwner>.Update.Set(x => x.Status, status));
-        
+
     public async Task<List<EvOwner>> GetAllAsync() =>
         await _col.Find(_ => true).SortBy(x => x.Nic).ToListAsync();
+        
+    public Task DeleteAsync(string nic) =>
+        _col.DeleteOneAsync(x => x.Nic == nic);
 }

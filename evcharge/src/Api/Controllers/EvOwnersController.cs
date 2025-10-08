@@ -42,9 +42,17 @@ public class EvOwnersController : ControllerBase
         var v = await _svc.GetAsync(nic);
         return v is null ? NotFound() : Ok(v);
     }
-    
-     [HttpGet]
-        [Authorize(Roles = "Backoffice")]
-        public async Task<ActionResult<List<EvOwnerView>>> GetAll()
-            => Ok(await _svc.GetAllAsync());
+
+    [HttpGet]
+    [Authorize(Roles = "Backoffice")]
+    public async Task<ActionResult<List<EvOwnerView>>> GetAll()
+           => Ok(await _svc.GetAllAsync());
+            
+    [HttpDelete("{nic}")]
+    [Authorize(Roles = "Backoffice")]
+    public async Task<IActionResult> Delete(string nic)
+    {
+        await _svc.DeleteAsync(nic);
+        return NoContent(); 
+    }        
 }

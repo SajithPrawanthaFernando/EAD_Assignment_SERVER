@@ -18,6 +18,8 @@ public interface IUserRepository
     Task<List<User>> GetAllAsync();
     Task<User?> GetByIdAsync(string id);
     Task<User?> FindByOwnerNicAsync(string nic);
+
+    Task DeleteByOwnerNicAsync(string ownerNic);
 }
 
 public sealed class UserRepository : IUserRepository
@@ -63,6 +65,9 @@ public sealed class UserRepository : IUserRepository
 
         return Collection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true });
     }
+
+    public Task DeleteByOwnerNicAsync(string ownerNic) =>
+        Collection.DeleteOneAsync(x => x.OwnerNic == ownerNic);
     
     
 }
