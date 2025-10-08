@@ -16,6 +16,9 @@ public interface IBookingService
     Task<List<BookingView>> GetAllAsync();
 
     Task<List<BookingWithStationView>> GetMineWithStationAsync(string ownerNic);
+
+    Task ApproveAsync(string id);
+    Task CompleteAsync(string id);
 }
 
 public sealed class BookingService : IBookingService
@@ -154,50 +157,79 @@ public sealed class BookingService : IBookingService
             .Select(b => new BookingView(b.Id, b.OwnerNic, b.StationId, b.SlotId, b.StartTimeUtc, b.Status.ToString()))
             .ToList();
     }
-    
-    public async Task<List<BookingWithStationView>> GetMineWithStationAsync(string ownerNic)
-{
-    var bookings = await _bookings.GetByOwnerAsync(ownerNic);
 
-    // Load distinct stations once
-    var stationIds = bookings.Select(b => b.StationId).Distinct().ToList();
-    var stationMap = new Dictionary<string, Domain.Stations.Station>();
-    foreach (var sid in stationIds)
+    public async Task<List<BookingWithStationView>> GetMineWithStationAsync(string ownerNic)
     {
-        var s = await _stations.GetAsync(sid); 
-        if (s is not null) stationMap[sid] = s;
+        var bookings = await _bookings.GetByOwnerAsync(ownerNic);
+
+        // Load distinct stations once
+        var stationIds = bookings.Select(b => b.StationId).Distinct().ToList();
+        var stationMap = new Dictionary<string, Domain.Stations.Station>();
+        foreach (var sid in stationIds)
+        {
+            var s = await _stations.GetAsync(sid);
+            if (s is not null) stationMap[sid] = s;
+        }
+
+
+        var list = new List<BookingWithStationView>(bookings.Count);
+        foreach (var b in bookings)
+        {
+            stationMap.TryGetValue(b.StationId, out var s);
+
+            StationView stationView = s is null
+                ? new StationView("", "", "", false, 0, 0, new List<StationSlotDto>())
+                : new StationView(
+                    s.Id,
+                    s.Name,
+                    s.Type.ToString(),
+                    s.Active,
+                    s.Lat,
+                    s.Lng,
+                    s.Slots.Select(sl => new StationSlotDto(sl.SlotId, sl.Label, sl.Available)).ToList()
+                  );
+
+            list.Add(new BookingWithStationView(
+                Id: b.Id,
+                OwnerNic: b.OwnerNic,
+                SlotId: b.SlotId,
+                StartTimeUtc: b.StartTimeUtc,
+                Status: b.Status.ToString(),
+                Station: stationView
+            ));
+        }
+
+        return list;
     }
+
+    public async Task ApproveAsync(string id)
+    {
+        var b = await _bookings.GetAsync(id) ?? throw new InvalidOperationException("Booking not found.");
+
+        if (b.Status is BookingStatus.Completed or BookingStatus.Cancelled)
+            throw new InvalidOperationException("Cannot approve a completed or cancelled booking.");
 
   
-    var list = new List<BookingWithStationView>(bookings.Count);
-    foreach (var b in bookings)
-    {
-        stationMap.TryGetValue(b.StationId, out var s);
+        if (b.Status != BookingStatus.Pending)
+            throw new InvalidOperationException("Only Pending bookings can be approved.");
 
-        StationView stationView = s is null
-            ? new StationView("", "", "", false, 0, 0, new List<StationSlotDto>())
-            : new StationView(
-                s.Id,
-                s.Name,
-                s.Type.ToString(),
-                s.Active,
-                s.Lat,
-                s.Lng,
-                s.Slots.Select(sl => new StationSlotDto(sl.SlotId, sl.Label, sl.Available)).ToList()
-              );
-
-        list.Add(new BookingWithStationView(
-            Id:           b.Id,
-            OwnerNic:     b.OwnerNic,
-            SlotId:       b.SlotId,
-            StartTimeUtc: b.StartTimeUtc,
-            Status:       b.Status.ToString(),
-            Station:      stationView
-        ));
+        await _bookings.UpdateStatusAsync(id, BookingStatus.Approved);
+        
     }
 
-    return list;
-}
+    public async Task CompleteAsync(string id)
+    {
+        var b = await _bookings.GetAsync(id) ?? throw new InvalidOperationException("Booking not found.");
+
+        if (b.Status != BookingStatus.Charging)
+            throw new InvalidOperationException("Only Charging bookings can be completed.");
+
+        await _bookings.UpdateStatusAsync(id, BookingStatus.Completed);
+
+       
+        await _schedules.SetAvailabilityAsync(b.StationId, b.SlotId, b.StartTimeUtc, true);
+        await _stations.SetSlotAvailabilityAsync(b.StationId, b.SlotId, true);
+    }
 }
 
 
