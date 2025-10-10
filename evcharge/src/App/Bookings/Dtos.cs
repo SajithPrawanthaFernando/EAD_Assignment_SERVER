@@ -1,3 +1,4 @@
+// Dtos.cs
 namespace App.Bookings;
 
 public sealed record BookingCreateDto(string OwnerNic, string StationId, string SlotId, DateTime StartTimeUtc);
