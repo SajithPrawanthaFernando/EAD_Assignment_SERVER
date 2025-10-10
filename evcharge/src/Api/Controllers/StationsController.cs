@@ -1,9 +1,11 @@
+// StationsController.cs
 using App.Stations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
+// Stations Route
 [ApiController]
 [Route("api/stations")]
 [Authorize]
@@ -12,6 +14,7 @@ public class StationsController : ControllerBase
     private readonly IStationService _svc;
     public StationsController(IStationService svc) => _svc = svc;
 
+    // Add Station
     [HttpPost]
     [Authorize(Roles = "Backoffice")]
     public async Task<ActionResult<string>> Create([FromBody] StationCreateDto dto)
@@ -19,7 +22,8 @@ public class StationsController : ControllerBase
         var id = await _svc.CreateAsync(dto);
         return CreatedAtAction(nameof(GetAll), new { id }, new { id });
     }
-
+    
+    // Update Station
     [HttpPut]
     [Authorize(Roles = "Backoffice")]
     public async Task<IActionResult> Update([FromBody] StationUpdateDto dto)
@@ -28,11 +32,13 @@ public class StationsController : ControllerBase
         return NoContent();
     }
 
+    // Get All Stations
     [HttpGet]
     [Authorize]
     public async Task<ActionResult<List<StationView>>> GetAll() =>
         Ok(await _svc.GetAllAsync());
 
+    // Deactivate
     [HttpPatch("{id}/deactivate")]
     [Authorize(Roles = "Backoffice")]
     public async Task<IActionResult> Deactivate(string id)
@@ -48,6 +54,7 @@ public class StationsController : ControllerBase
         }
     }
 
+    // Activate
     [HttpPatch("{id}/activate")]
     [Authorize(Roles = "Backoffice")]
     public async Task<IActionResult> Activate(string id)
