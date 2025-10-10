@@ -1,3 +1,4 @@
+// QrController.cs
 using App.Qr;
 using Infra.Bookings;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +12,7 @@ public sealed record IssueQrResponse(string Token);
 public sealed record VerifyQrRequest(string Token);
 public sealed record VerifyQrResponse(bool Valid, string? BookingId);
 
+// Qr Route
 [ApiController]
 [Route("api/qr")]
 public class QrController : ControllerBase

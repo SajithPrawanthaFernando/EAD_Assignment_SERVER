@@ -1,3 +1,4 @@
+// BookingService.cs
 using App.Stations;
 using Domain.Bookings;
 using Infra.Bookings;
@@ -37,19 +38,23 @@ public sealed class BookingService : IBookingService
         _stations = stations;
     }
 
+   // Within 7 days validation
     private static bool Within7Days(DateTime startUtc)
         => startUtc >= DateTime.UtcNow && startUtc <= DateTime.UtcNow.AddDays(7);
 
+    // Is too late validation
     private static bool IsTooLate(DateTime startUtc)
         => DateTime.UtcNow > startUtc.AddHours(-12);
 
+    // EnsureSelfOrBackoffice
     private static void EnsureSelfOrBackoffice(string? requesterNic, string ownerNic, bool isBackoffice)
     {
         if (isBackoffice) return;
         if (string.IsNullOrWhiteSpace(requesterNic) || !string.Equals(requesterNic, ownerNic, StringComparison.OrdinalIgnoreCase))
             throw new UnauthorizedAccessException("You can only manage your own bookings.");
     }
-
+    
+    // Create booking
     public async Task<string> CreateAsync(BookingCreateDto dto, string? requesterNic, bool isBackoffice)
     {
         if (!Within7Days(dto.StartTimeUtc))
@@ -80,6 +85,7 @@ public sealed class BookingService : IBookingService
         return id;
     }
 
+    // update booking
     public async Task UpdateAsync(BookingUpdateDto dto, string? requesterNic, bool isBackoffice)
     {
         var existing = await _bookings.GetAsync(dto.Id) ?? throw new InvalidOperationException("Booking not found.");
@@ -123,6 +129,7 @@ public sealed class BookingService : IBookingService
         }
     }
 
+    // cancel booking
     public async Task CancelAsync(string id, string? requesterNic, bool isBackoffice)
     {
         var b = await _bookings.GetAsync(id) ?? throw new InvalidOperationException("Booking not found.");
@@ -138,6 +145,7 @@ public sealed class BookingService : IBookingService
         await _stations.SetSlotAvailabilityAsync(b.StationId, b.SlotId, true);
     }
 
+    // get own bookings
     public async Task<List<BookingView>> GetMineAsync(string ownerNic)
     {
         var list = await _bookings.GetByOwnerAsync(ownerNic);
@@ -158,6 +166,7 @@ public sealed class BookingService : IBookingService
             .ToList();
     }
 
+    // get own with station details
     public async Task<List<BookingWithStationView>> GetMineWithStationAsync(string ownerNic)
     {
         var bookings = await _bookings.GetByOwnerAsync(ownerNic);
@@ -202,6 +211,7 @@ public sealed class BookingService : IBookingService
         return list;
     }
 
+    // approve booking
     public async Task ApproveAsync(string id)
     {
         var b = await _bookings.GetAsync(id) ?? throw new InvalidOperationException("Booking not found.");
@@ -209,14 +219,15 @@ public sealed class BookingService : IBookingService
         if (b.Status is BookingStatus.Completed or BookingStatus.Cancelled)
             throw new InvalidOperationException("Cannot approve a completed or cancelled booking.");
 
-  
+
         if (b.Status != BookingStatus.Pending)
             throw new InvalidOperationException("Only Pending bookings can be approved.");
 
         await _bookings.UpdateStatusAsync(id, BookingStatus.Approved);
-        
+
     }
 
+    // complete booking
     public async Task CompleteAsync(string id)
     {
         var b = await _bookings.GetAsync(id) ?? throw new InvalidOperationException("Booking not found.");
@@ -226,7 +237,7 @@ public sealed class BookingService : IBookingService
 
         await _bookings.UpdateStatusAsync(id, BookingStatus.Completed);
 
-       
+
         await _schedules.SetAvailabilityAsync(b.StationId, b.SlotId, b.StartTimeUtc, true);
         await _stations.SetSlotAvailabilityAsync(b.StationId, b.SlotId, true);
     }

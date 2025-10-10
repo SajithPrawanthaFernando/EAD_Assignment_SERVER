@@ -1,3 +1,4 @@
+// NearbyService.cs
 using Infra.Stations;
 
 namespace App.Stations;
@@ -23,6 +24,7 @@ public sealed class NearbyStations : INearbyStations
         return R * 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
     }
 
+    // find nearby stations
     public async Task<List<StationView>> FindAsync(double lat, double lng, double radiusKm)
     {
         var all = await _repo.GetAllAsync();
@@ -44,7 +46,7 @@ public sealed class NearbyStations : INearbyStations
                 x.S.Lat,
                 x.S.Lng,
                 x.S.Slots.Select(sl =>
-                    new StationSlotDto(sl.SlotId, sl.Label, sl.Available) 
+                    new StationSlotDto(sl.SlotId, sl.Label, sl.Available)
                 ).ToList()
             ))
             .ToList();

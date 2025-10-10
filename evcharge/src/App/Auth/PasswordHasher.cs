@@ -1,3 +1,4 @@
+// PasswordHasher.cs
 namespace App.Auth;
 
 public static class PasswordHasher

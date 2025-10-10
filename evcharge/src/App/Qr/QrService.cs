@@ -1,3 +1,4 @@
+// QrService.cs
 using System.Security.Cryptography;
 using Domain.Bookings;
 using Domain.Qr;
@@ -37,6 +38,7 @@ public sealed class QrService : IQrService
         _stations = stations;
     }
 
+    // Issue for booking
     public async Task<string> IssueForBookingAsync(string bookingId, DateTime expUtc)
     {
         // Ensure booking exists and is valid
@@ -54,6 +56,7 @@ public sealed class QrService : IQrService
         return token;
     }
 
+    // verify qr
     public async Task<(string BookingId, bool Valid)> VerifyAsync(string token)
     {
         var t = await _qr.FindByTokenAsync(token);
@@ -69,6 +72,7 @@ public sealed class QrService : IQrService
         return (t.BookingId, true);
     }
     
+    // start charging
      public async Task StartChargingAsync(string bookingId)
     {
         var b = await _bookings.GetAsync(bookingId) ?? throw new InvalidOperationException("Booking not found.");
@@ -80,6 +84,7 @@ public sealed class QrService : IQrService
         await _bookings.UpdateStatusAsync(bookingId, BookingStatus.Charging);
     }
 
+    // complete booking
     public async Task CompleteAsync(string bookingId)
     {
         var b = await _bookings.GetAsync(bookingId) ?? throw new InvalidOperationException("Booking not found.");
@@ -88,7 +93,7 @@ public sealed class QrService : IQrService
 
         await _bookings.UpdateStatusAsync(bookingId, BookingStatus.Completed);
 
-        
+
         await _schedules.SetAvailabilityAsync(b.StationId, b.SlotId, b.StartTimeUtc, true);
         await _stations.SetSlotAvailabilityAsync(b.StationId, b.SlotId, true);
     }
