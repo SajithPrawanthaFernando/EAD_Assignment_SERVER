@@ -1,3 +1,4 @@
+// StationService.cs
 using Domain.Stations;
 using Infra.Stations;
 using Infra.Bookings;
@@ -22,57 +23,61 @@ public sealed class StationService : IStationService
         _repo = repo; _bookings = bookings;
     }
 
+    // create
     public async Task<string> CreateAsync(StationCreateDto dto)
-{
-    var s = new Station
     {
-        Id = Guid.NewGuid().ToString("N"),
-        Name = dto.Name,
-        Type = dto.Type,
-        Lat = dto.Lat,
-        Lng = dto.Lng,
-        Active = true,
-        Slots = dto.Slots.Select(x => new StationSlot
+        var s = new Station
+        {
+            Id = Guid.NewGuid().ToString("N"),
+            Name = dto.Name,
+            Type = dto.Type,
+            Lat = dto.Lat,
+            Lng = dto.Lng,
+            Active = true,
+            Slots = dto.Slots.Select(x => new StationSlot
+            {
+                SlotId = x.SlotId,
+                Label = x.Label,
+                Available = true
+            }).ToList()
+        };
+        await _repo.InsertAsync(s);
+        return s.Id;
+    }
+
+    // update
+    public async Task UpdateAsync(StationUpdateDto dto)
+    {
+        var s = await _repo.GetAsync(dto.Id) ?? throw new InvalidOperationException("Station not found.");
+        s.Name = dto.Name;
+        s.Type = dto.Type;
+        s.Lat = dto.Lat;
+        s.Lng = dto.Lng;
+        s.Slots = dto.Slots.Select(x => new StationSlot
         {
             SlotId = x.SlotId,
             Label = x.Label,
-            Available = true 
-        }).ToList()
-    };
-    await _repo.InsertAsync(s);
-    return s.Id;
-}
+            Available = true
+        }).ToList();
+        await _repo.UpdateAsync(s);
+    }
 
-    public async Task UpdateAsync(StationUpdateDto dto)
-{
-    var s = await _repo.GetAsync(dto.Id) ?? throw new InvalidOperationException("Station not found.");
-    s.Name = dto.Name;
-    s.Type = dto.Type;
-    s.Lat = dto.Lat;
-    s.Lng = dto.Lng;
-    s.Slots = dto.Slots.Select(x => new StationSlot
+    // get all
+    public async Task<List<StationView>> GetAllAsync()
     {
-        SlotId = x.SlotId,
-        Label = x.Label,
-        Available = true 
-    }).ToList();
-    await _repo.UpdateAsync(s);
-}
-
-   public async Task<List<StationView>> GetAllAsync()
-{
-    var all = await _repo.GetAllAsync();
-    return all.Select(s => new StationView(
-        s.Id,
-        s.Name,
-        s.Type.ToString(),
-        s.Active,
-        s.Lat,
-        s.Lng,
-        s.Slots.Select(x => new StationSlotDto(x.SlotId, x.Label, x.Available)).ToList()
-    )).ToList();
-}
-
+        var all = await _repo.GetAllAsync();
+        return all.Select(s => new StationView(
+            s.Id,
+            s.Name,
+            s.Type.ToString(),
+            s.Active,
+            s.Lat,
+            s.Lng,
+            s.Slots.Select(x => new StationSlotDto(x.SlotId, x.Label, x.Available)).ToList()
+        )).ToList();
+    }
+  
+    // activate
     public async Task SetActiveAsync(string id, bool active)
     {
         if (!active)

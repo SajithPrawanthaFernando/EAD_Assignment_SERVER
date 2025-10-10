@@ -1,3 +1,4 @@
+// User.cs
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Domain.Users;

@@ -1,4 +1,4 @@
-// src/Api/Startup/SeedUsersHostedService.cs
+// SeedUsersHostedService.cs
 using App.Auth;
 using Domain.Users;
 using Infra.Users;

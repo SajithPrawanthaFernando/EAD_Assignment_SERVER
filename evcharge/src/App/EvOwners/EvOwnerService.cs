@@ -1,3 +1,4 @@
+// EvOwnerService.cs
 using App.Auth;                 
 using Domain.EvOwners;
 using Domain.Users;             
@@ -30,6 +31,7 @@ public sealed class EvOwnerService : IEvOwnerService
         _users = users;
     }
 
+    // UpsertAsync
     public async Task UpsertAsync(EvOwnerUpsertDto dto)
     {
         // Upsert owner
@@ -68,6 +70,8 @@ public sealed class EvOwnerService : IEvOwnerService
         }
 
     }
+
+    // Deactivate
     public async Task DeactivateAsync(string nic)
     {
         // Deactivate the owner
@@ -82,6 +86,7 @@ public sealed class EvOwnerService : IEvOwnerService
         }
     }
 
+    // Reactivate
     public async Task ReactivateAsync(string nic)
     {
         // Reactivate the owner
@@ -96,7 +101,7 @@ public sealed class EvOwnerService : IEvOwnerService
         }
     }
 
-
+    // Get owner
     public async Task<EvOwnerView?> GetAsync(string nic)
     {
         var owner = await _repo.GetAsync(nic);
@@ -124,6 +129,7 @@ public sealed class EvOwnerService : IEvOwnerService
         );
     }
 
+    // get all
     public async Task<List<EvOwnerView>> GetAllAsync()
     {
         var owners = await _repo.GetAllAsync();
@@ -160,7 +166,8 @@ public sealed class EvOwnerService : IEvOwnerService
             );
         }).ToList();
     }
-        
+
+    // delete owner    
     public async Task DeleteAsync(string nic)
         {
          

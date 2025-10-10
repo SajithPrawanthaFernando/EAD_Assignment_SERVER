@@ -1,3 +1,4 @@
+// AuthController.cs
 using App.Auth;
 using Infra.Users;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ namespace Api.Controllers;
 public sealed record LoginRequest(string Email, string Password);
 public sealed record LoginResponse(string Token);
 
+// Auth Route
 [ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase
@@ -19,6 +21,7 @@ public class AuthController : ControllerBase
         _users = users; _jwt = jwt;
     }
 
+    // Login
     [HttpPost("login")]
     public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest req)
     {
