@@ -1,3 +1,4 @@
+// QrRepository.cs
 using Domain.Qr;
 using MongoDB.Driver;
 using Infra.Mongo;

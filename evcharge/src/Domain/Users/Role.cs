@@ -1,3 +1,4 @@
+// Role.cs
 namespace Domain.Users;
 
 public enum Role
