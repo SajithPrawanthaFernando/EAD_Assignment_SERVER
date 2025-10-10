@@ -1,3 +1,4 @@
+// Booking.cs
 namespace Domain.Bookings;
 
 public sealed class Booking

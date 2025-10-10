@@ -1,7 +1,9 @@
+// BookingValidators.cs
 using FluentValidation;
 
 namespace App.Bookings;
 
+// BookingCreateValidator
 public sealed class BookingCreateValidator : AbstractValidator<BookingCreateDto>
 {
     public BookingCreateValidator()
@@ -13,6 +15,7 @@ public sealed class BookingCreateValidator : AbstractValidator<BookingCreateDto>
     }
 }
 
+// BookingUpdateValidator
 public sealed class BookingUpdateValidator : AbstractValidator<BookingUpdateDto>
 {
     public BookingUpdateValidator()

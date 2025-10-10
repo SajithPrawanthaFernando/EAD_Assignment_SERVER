@@ -1,3 +1,4 @@
+// indexBuilder.cs
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Domain.Users;
@@ -13,7 +14,7 @@ public static class IndexBuilder
         const string emailField = "email";
         const string userEmailIndexName = "ux_user_email";
 
-        // Drop existing index with that name (definition may differ)
+        // Drop existing index with that name 
         var existing = await users.Indexes.ListAsync();
         var existingList = await existing.ToListAsync();
         if (existingList.Any(ix => ix.GetValue("name", "").AsString == userEmailIndexName))

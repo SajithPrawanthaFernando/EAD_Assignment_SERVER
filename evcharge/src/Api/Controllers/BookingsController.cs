@@ -1,3 +1,4 @@
+// BookingController.cs
 using System.Security.Claims;
 using App.Bookings;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,7 @@ using App.Qr;
 
 namespace Api.Controllers;
 
+// Booking Route
 [ApiController]
 [Route("api/bookings")]
 [Authorize(Roles = "Backoffice,EVOwner,StationOperator")]
@@ -104,13 +106,15 @@ public class BookingsController : ControllerBase
         return Ok(result);
     }
 
+    // View my own bookings 
     [HttpGet("mine/{ownerNic}/detail")]
     public async Task<ActionResult<List<BookingWithStationView>>> MineWithStation(string ownerNic)
     {
         var result = await _svc.GetMineWithStationAsync(ownerNic);
         return Ok(result);
     }
-    
+
+    // Approve Bookings
     [HttpPatch("{id}/approve")]
     [Authorize(Roles = "Backoffice")]
     public async Task<IActionResult> Approve(string id)
@@ -123,6 +127,7 @@ public class BookingsController : ControllerBase
         catch (InvalidOperationException ex) { return Conflict(new { message = ex.Message }); }
     }
     
+    // Start Charging Booking
     [HttpPatch("{id}/start-charging")]
     public async Task<IActionResult> StartCharging(string id)
     {
@@ -134,7 +139,7 @@ public class BookingsController : ControllerBase
         catch (InvalidOperationException ex) { return Conflict(new { message = ex.Message }); }
     }
 
-
+    // Complete Booking
     [HttpPatch("{id}/complete")]
     public async Task<IActionResult> Complete(string id)
     {
